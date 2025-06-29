@@ -2,6 +2,9 @@
 build/
 out/
 
+# Visual Studio folders and files
+.vs/
+
 # Prerequisites
 *.d
 
