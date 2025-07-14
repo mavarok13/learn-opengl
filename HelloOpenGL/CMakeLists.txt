@@ -19,7 +19,7 @@ FetchContent_Declare(SFML
 )
 FetchContent_MakeAvailable(SFML)
 
-add_executable (HelloOpenGL main.cpp "D:/dev/lib/glad.c")
+add_executable (HelloOpenGL main.cpp "D:/dev/lib/glad.c" "src/shader_loader.hpp")
 
 target_include_directories(HelloOpenGL PRIVATE "D:/dev/lib")
 target_link_libraries(HelloOpenGL PRIVATE SFML::Graphics)
