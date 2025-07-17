@@ -1,3 +1,7 @@
+// ==============================
+// * TASK 1: draw two triangles
+// ==============================
+
 #include <iostream>
 #include <optional>
 
@@ -7,22 +11,20 @@
 #include "src/shader_loader.hpp"
 
 // * FIX THIS
-const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL/src/vertex.glsl";
-const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL/src/fragment.glsl";
+const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercises/src/vertex.glsl";
+const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercises/src/fragment.glsl";
 
 int main() {
 	unsigned window_width = 720u;
 	unsigned window_height = 480u;
 
-	sf::Window window(sf::VideoMode(sf::Vector2u{ window_width, window_height }), L"пїЅпїЅпїЅпїЅ", sf::Style::Titlebar | sf::Style::Close);
+	sf::Window window(sf::VideoMode(sf::Vector2u{ window_width, window_height }), L"Тест", sf::Style::Titlebar | sf::Style::Close);
 	window.setActive(true);
 
 	if (!gladLoadGL()) {
 		std::cerr << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-
-	glViewport(0, 0, window.getSize().x, window.getSize().y);
 
 // * Compile vertex shader
 	int success; char info_log[512];
@@ -83,16 +85,15 @@ int main() {
 // * ======================
 
 	float vertices[] = {
-		// corners
-		-.5f, -.5f, .0f, // left bottom 
-		.5f, -.5f, .0f, // right bottom
-		.5f, .5f, .0f, // right upper
-		-.5f, .5f, .0f // left upper
-	};
+		// first triangle
+		-.5f, -.51f, .0f, // left bottom 
+		.5f, -.51f, .0f, // right bottom
+		.5f, .49f, .0f, // right upper
 
-	unsigned indices[] = {
-		0, 1, 2, // first triangle
-		0, 2, 3 // second triangle
+		// second triangle
+		- .5f, -.49f, .0f, // left bottom 
+		.5f, .51f, .0f, // right upper
+		-.5f, .51f, .0f // left upper
 	};
 
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
@@ -108,11 +109,6 @@ int main() {
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	unsigned EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 
@@ -132,8 +128,7 @@ int main() {
 
 		glUseProgram(shader_program);
 		glBindVertexArray(VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		window.display();
 	}
