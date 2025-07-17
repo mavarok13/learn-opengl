@@ -33,8 +33,15 @@ target_include_directories(Exercise2 PRIVATE "D:/dev/lib")
 target_link_libraries(Exercise2 PRIVATE SFML::Graphics)
 target_compile_features(Exercise2 PRIVATE cxx_std_17)
 
+# * Exercise 3
+add_executable (Exercise3 exercise3.cpp "D:/dev/lib/glad.c" "src/shader_loader.hpp")
+
+target_include_directories(Exercise3 PRIVATE "D:/dev/lib")
+target_link_libraries(Exercise3 PRIVATE SFML::Graphics)
+target_compile_features(Exercise3 PRIVATE cxx_std_17)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Exercise1 PROPERTY CXX_STANDARD 20)
   set_property(TARGET Exercise2 PROPERTY CXX_STANDARD 20)
+  set_property(TARGET Exercise3 PROPERTY CXX_STANDARD 20)
 endif()
