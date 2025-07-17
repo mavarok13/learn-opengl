@@ -11,8 +11,8 @@
 #include "src/shader_loader.hpp"
 
 // * FIX THIS
-const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL/src/vertex.glsl";
-const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL/src/fragment.glsl";
+const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercises/src/vertex.glsl";
+const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercises/src/fragment.glsl";
 
 int main() {
 	unsigned window_width = 720u;
