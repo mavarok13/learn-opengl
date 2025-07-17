@@ -19,13 +19,22 @@ FetchContent_Declare(SFML
 )
 FetchContent_MakeAvailable(SFML)
 
-add_executable (HelloOpenGL main.cpp "D:/dev/lib/glad.c" "src/shader_loader.hpp")
+# * Exercise 1
+add_executable (Exercise1 exercise1.cpp "D:/dev/lib/glad.c" "src/shader_loader.hpp")
 
-target_include_directories(HelloOpenGL PRIVATE "D:/dev/lib")
-target_link_libraries(HelloOpenGL PRIVATE SFML::Graphics)
-target_compile_features(HelloOpenGL PRIVATE cxx_std_17)
+target_include_directories(Exercise1 PRIVATE "D:/dev/lib")
+target_link_libraries(Exercise1 PRIVATE SFML::Graphics)
+target_compile_features(Exercise1 PRIVATE cxx_std_17)
+
+# * Exercise 2
+add_executable (Exercise2 exercise2.cpp "D:/dev/lib/glad.c" "src/shader_loader.hpp")
+
+target_include_directories(Exercise2 PRIVATE "D:/dev/lib")
+target_link_libraries(Exercise2 PRIVATE SFML::Graphics)
+target_compile_features(Exercise2 PRIVATE cxx_std_17)
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET HelloOpenGL PROPERTY CXX_STANDARD 20)
+  set_property(TARGET Exercise1 PROPERTY CXX_STANDARD 20)
+  set_property(TARGET Exercise2 PROPERTY CXX_STANDARD 20)
 endif()
