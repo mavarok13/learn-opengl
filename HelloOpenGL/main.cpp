@@ -81,9 +81,16 @@ int main() {
 // * ======================
 
 	float vertices[] = {
-		-.5f, -.5f, .0f,
-		.5f, -.5f, .0f,
-		.0f, .5f, .0f
+		// corners
+		-.5f, -.5f, .0f, // left bottom 
+		.5f, -.5f, .0f, // right bottom
+		.5f, .5f, .0f, // right upper
+		-.5f, .5f, .0f // left upper
+	};
+
+	unsigned indices[] = {
+		0, 1, 2, // first triangle
+		0, 2, 3 // second triangle
 	};
 
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
@@ -99,6 +106,11 @@ int main() {
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	unsigned EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 
@@ -118,7 +130,8 @@ int main() {
 
 		glUseProgram(shader_program);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		window.display();
 	}
