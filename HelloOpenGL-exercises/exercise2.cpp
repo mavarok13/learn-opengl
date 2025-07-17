@@ -11,8 +11,8 @@
 #include "src/shader_loader.hpp"
 
 // * FIX THIS
-const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercise0-4-1/src/vertex.glsl";
-const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercise0-4-1/src/fragment.glsl";
+const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercises/src/vertex.glsl";
+const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL-exercises/src/fragment.glsl";
 
 int main() {
 	unsigned window_width = 720u;
@@ -98,19 +98,38 @@ int main() {
 
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
 
-	unsigned VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+//	* Create 1st VAO and VBO
+	unsigned VAO1;
+	glGenVertexArrays(1, &VAO1);
+	glBindVertexArray(VAO1);
 
-	unsigned VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	unsigned VBO1;
+	glGenBuffers(1, &VBO1);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+//	* Create 2nd VAO and VBO
+	unsigned VAO2;
+	glGenVertexArrays(1, &VAO2);
+	glBindVertexArray(VAO2);
+
+	unsigned VBO2;
+	glGenBuffers(1, &VBO2);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)(sizeof(float)*9));
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+//	* ==========================
 
 	bool is_running = true;
 	while (is_running) {
@@ -127,8 +146,11 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shader_program);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(VAO1);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glBindVertexArray(VAO2);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		window.display();
 	}
