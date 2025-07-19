@@ -31,6 +31,13 @@ target_include_directories(ColorfulShape PRIVATE "D:/dev/lib")
 target_link_libraries(ColorfulShape PRIVATE SFML::Graphics)
 target_compile_features(ColorfulShape PRIVATE cxx_std_17)
 
+# * Exercise 1
+add_executable (Exercise1 exercise1.cpp "D:/dev/lib/glad.c" "src/shader_loader.hpp")
+
+target_include_directories(Exercise1 PRIVATE "D:/dev/lib")
+target_link_libraries(Exercise1 PRIVATE SFML::Graphics)
+target_compile_features(Exercise1 PRIVATE cxx_std_17)
+
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET UniformTest PROPERTY CXX_STANDARD 20)
