@@ -1,5 +1,7 @@
 #include <iostream>
 #include <optional>
+#include <chrono>
+#include <cmath>
 
 #include <SFML/Window.hpp>
 #include <glad/glad.h>
@@ -7,8 +9,9 @@
 #include "src/shader_loader.hpp"
 
 // * FIX THIS
-const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL/src/vertex.glsl";
-const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL/src/fragment.glsl";
+const char* vertex_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL2/src/vertex.glsl";
+const char* fragment_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL2/src/fragment.glsl";
+const char* fragment2_shader_path = "D:/dev/source/learn-opengl/HelloOpenGL2/src/fragment2.glsl";
 
 int main() {
 	unsigned window_width = 720u;
@@ -44,7 +47,7 @@ int main() {
 		std::cout << "[SHADER COMPILE INFO]: Shader compile successfuly" << std::endl;
 	}
 
-// * Compile fragment shader
+// * Compile 1st fragment shader
 	std::string fragment_shader_source_code = shader_loader::ReadShaderSourceFromFile(fragment_shader_path);
 	const char* fragment_shader_source_code_c_str = fragment_shader_source_code.c_str();
 
@@ -62,14 +65,30 @@ int main() {
 		std::cout << "[SHADER COMPILE INFO]: Shader compile successfuly" << std::endl;
 	}
 
+// * Compile 2nd fragment shader
+	std::string fragment2_shader_source_code = shader_loader::ReadShaderSourceFromFile(fragment2_shader_path);
+	const char* fragment2_shader_source_code_c_str = fragment2_shader_source_code.c_str();
+
+	unsigned fragment_shader2 = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment_shader2, 1, &fragment2_shader_source_code_c_str, NULL);
+
+	std::cout << "[SHADER COMPILE INFO]: Starting compile fragment shader..." << std::endl;
+	glCompileShader(fragment_shader2);
+	glGetShaderiv(fragment_shader2, GL_COMPILE_STATUS, &success);
+
+	if (!success) {
+		glGetShaderInfoLog(fragment_shader2, 512, NULL, info_log);
+		std::cerr << "[SHADER COMPILE ERR]: " << info_log << std::endl;
+	} else {
+		std::cout << "[SHADER COMPILE INFO]: Shader compile successfuly" << std::endl;
+	}
+
 // * Link shaders
+// * First program
 	unsigned shader_program = glCreateProgram();
 	glAttachShader(shader_program, vertex_shader);
 	glAttachShader(shader_program, fragment_shader);
 	glLinkProgram(shader_program);
-
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
 
 	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
 
@@ -80,23 +99,41 @@ int main() {
 		std::cout << "[SHADER LINK INFO]: Shader link successfuly" << std::endl;
 	}
 
+// * Second program
+	unsigned shader_program2 = glCreateProgram();
+	glAttachShader(shader_program2, vertex_shader);
+	glAttachShader(shader_program2, fragment_shader2);
+	glLinkProgram(shader_program2);
+
+	glGetProgramiv(shader_program2, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(shader_program2, 512, NULL, info_log);
+		std::cerr << "[SHADER LINK ERR]: " << info_log << std::endl;
+	} else {
+		std::cout << "[SHADER LINK INFO]: Shader link successfuly" << std::endl;
+	}
+
+	glDeleteShader(vertex_shader);
+	glDeleteShader(fragment_shader);
+	glDeleteShader(fragment_shader2);
+
 // * ======================
 
 	float vertices[] = {
-		// corners
-		-.5f, -.5f, .0f, // left bottom 
-		.5f, -.5f, .0f, // right bottom
-		.5f, .5f, .0f, // right upper
-		-.5f, .5f, .0f // left upper
-	};
-
-	unsigned indices[] = {
-		0, 1, 2, // first triangle
-		0, 2, 3 // second triangle
+		// 1st triable
+		-.5f, -.51f, .0f, // left bottom 
+		.5f, -.51f, .0f, // right bottom
+		.5f, .49f, .0f, // right upper
+		
+		// 2nd triangle
+		-.5f, -.49f, .0f, // left bottom 
+		.5f, .51f, .0f, // right upper
+		-.5f, .51f, .0f // left upper
 	};
 
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
 
+// * Configure vertex arrays and buffers
 	unsigned VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -109,12 +146,35 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	unsigned EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	unsigned VAO2;
+	glGenVertexArrays(1, &VAO2);
+	glBindVertexArray(VAO2);
+
+	unsigned VBO2;
+	glGenBuffers(1, &VBO2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*) (sizeof(float)*9));
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+// * Get uniform variables
+
+	unsigned color1 = glGetUniformLocation(shader_program, "color");
+	unsigned color2 = glGetUniformLocation(shader_program2, "color");
+
+// * Create clock
+	std::chrono::steady_clock sc;
+	auto now = sc.now();
+
+// * =================================
 
 	bool is_running = true;
 	while (is_running) {
@@ -127,13 +187,20 @@ int main() {
 			}
 		}
 
-		glClearColor(.02f, .75f, .23f, 1.f);
+		glClearColor(.0f, .0f, .0f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shader_program);
+		float red_color = std::sin(.00000001f*(sc.now() - now).count())+.5f;
+		glUniform4f(color1, red_color, .0f, .0f, 1.f);
 		glBindVertexArray(VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glUseProgram(shader_program2);
+		float blue_color = std::cos(.00000001f*(sc.now() - now).count()+3.14f/2)+.5f;
+		glUniform4f(color1, .0f, .0f, blue_color, 1.f);
+		glBindVertexArray(VAO2);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		window.display();
 	}
